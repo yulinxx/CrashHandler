@@ -5,16 +5,33 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include <sys/stat.h>
+#include <filesystem>
 
-#if defined(_WIN32) || defined(_WIN64)
-#include <windows.h>
-#include <direct.h>
-#else
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/stat.h>
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
 #endif
+#include <windows.h>
+#endif
+
+namespace fs = std::filesystem;
+
+static std::string pathToUtf8(const fs::path& p)
+{
+#ifdef _WIN32
+    if (p.empty())
+        return {};
+    const std::wstring w = p.native();
+    int len = WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, nullptr, 0, nullptr, nullptr);
+    if (len <= 0)
+        return {};
+    std::string s(len - 1, '\0');
+    WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, s.data(), len, nullptr, nullptr);
+    return s;
+#else
+    return p.string();
+#endif
+}
 
 namespace CrashHandler
 {
@@ -84,52 +101,32 @@ namespace CrashHandler
         if (dumpPath.empty())
             return files;
 
-#if defined(_WIN32) || defined(_WIN64)
-        std::string searchPath = dumpPath + "\\*.dmp";
-        WIN32_FIND_DATAA findData;
-        HANDLE hFind = FindFirstFileA(searchPath.c_str(), &findData);
-        if (hFind == INVALID_HANDLE_VALUE)
-            return files;
-
-        do
+        try
         {
-            if (!(findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-            {
-                files.push_back(dumpPath + "\\" + findData.cFileName);
-            }
-        } while (FindNextFileA(hFind, &findData));
+            fs::path dumpFsPath = fs::u8path(dumpPath);
+            if (!fs::exists(dumpFsPath))
+                return files;
 
-        FindClose(hFind);
-#else
-        DIR* dir = opendir(dumpPath.c_str());
-        if (!dir)
-            return files;
-
-        struct dirent* entry;
-        while ((entry = readdir(dir)) != nullptr)
-        {
-            std::string name = entry->d_name;
-            if (name.size() >= 4 && name.substr(name.size() - 4) == ".dmp")
+            std::vector<fs::path> dumpPaths;
+            for (const auto& entry : fs::directory_iterator(dumpFsPath))
             {
-                files.push_back(dumpPath + "/" + name);
+                if (entry.is_regular_file() && entry.path().extension() == ".dmp")
+                {
+                    dumpPaths.push_back(entry.path());
+                }
             }
+
+            std::sort(dumpPaths.begin(), dumpPaths.end(),
+                [](const fs::path& a, const fs::path& b) {
+                    return fs::last_write_time(a) > fs::last_write_time(b);
+                });
+
+            for (const auto& p : dumpPaths)
+                files.push_back(pathToUtf8(p));
         }
-        closedir(dir);
-#endif
-
-        std::sort(files.begin(), files.end(), [](const std::string& a, const std::string& b) {
-#if defined(_WIN32) || defined(_WIN64)
-            struct _stat64 stA, stB;
-            _stat64(a.c_str(), &stA);
-            _stat64(b.c_str(), &stB);
-            return stA.st_mtime > stB.st_mtime;
-#else
-            struct stat stA, stB;
-            stat(a.c_str(), &stA);
-            stat(b.c_str(), &stB);
-            return stA.st_mtime > stB.st_mtime;
-#endif
-            });
+        catch (...)
+        {
+        }
 
         return files;
     }
@@ -144,13 +141,14 @@ namespace CrashHandler
 
         for (size_t i = static_cast<size_t>(m_config.maxDumpFiles); i < files.size(); ++i)
         {
-#if defined(_WIN32) || defined(_WIN64)
-            if (DeleteFileA(files[i].c_str()))
-                ++removed;
-#else
-            if (unlink(files[i].c_str()) == 0)
-                ++removed;
-#endif
+            try
+            {
+                if (fs::remove(fs::u8path(files[i])))
+                    ++removed;
+            }
+            catch (...)
+            {
+            }
         }
 
         return removed;
@@ -165,17 +163,17 @@ namespace CrashHandler
         if (path.empty())
             return false;
 
-#if defined(_WIN32) || defined(_WIN64)
-        DWORD attrs = GetFileAttributesA(path.c_str());
-        if (attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY))
-            return true;
-        return CreateDirectoryA(path.c_str(), nullptr) == TRUE || GetLastError() == ERROR_ALREADY_EXISTS;
-#else
-        struct stat st;
-        if (stat(path.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
-            return true;
-        return mkdir(path.c_str(), 0755) == 0 || errno == EEXIST;
-#endif
+        try
+        {
+            fs::path dir = fs::u8path(path);
+            if (fs::exists(dir))
+                return fs::is_directory(dir);
+            return fs::create_directories(dir);
+        }
+        catch (...)
+        {
+            return false;
+        }
     }
 
     std::string CrashHandlerImpl::generateDumpFileName(const std::string& appName)
