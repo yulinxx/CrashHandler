@@ -1,4 +1,4 @@
-﻿#include "CrashHandler/CrashHandler.h"
+#include "CrashHandler/CrashHandler.h"
 #include "CrashHandlerImpl.h"
 
 namespace CrashHandler
