@@ -60,7 +60,7 @@ namespace CrashHandler
             shutdown();
         }
 
-        bool initialize(const CrashHandlerConfig& config) override
+        bool initialize(const CrashHandlerConfigData& config) override
         {
             std::lock_guard<std::mutex> lock(m_mutex);
 

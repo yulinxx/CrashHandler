@@ -1,11 +1,12 @@
 #ifndef CRASHHANDLER_IMPL_H
 #define CRASHHANDLER_IMPL_H
 
-#include "CrashHandler/CrashHandler.h"
-#include <string>
-#include <vector>
+#include "CrashHandlerInternal.h"
+
 #include <functional>
 #include <mutex>
+#include <string>
+#include <vector>
 
 namespace CrashHandler
 {
@@ -15,7 +16,7 @@ class CrashHandlerImpl
 public:
     virtual ~CrashHandlerImpl() = default;
 
-    virtual bool initialize(const CrashHandlerConfig& config) = 0;
+    virtual bool initialize(const CrashHandlerConfigData& config) = 0;
     virtual void shutdown() = 0;
 
     virtual bool writeMinidump() = 0;
@@ -28,7 +29,7 @@ public:
     std::vector<std::string> getDumpFiles() const;
     int cleanOldDumps();
 
-    const CrashHandlerConfig& config() const;
+    const CrashHandlerConfigData& config() const;
 
     bool isInitialized() const { return m_initialized; }
 
@@ -42,7 +43,7 @@ protected:
     std::vector<std::string> getDumpFiles_nolock() const;
     int cleanOldDumps_nolock();
 
-    CrashHandlerConfig m_config;
+    CrashHandlerConfigData m_config;
     CrashCallback m_crashCallback;
     std::string m_lastDumpPath;
     mutable std::mutex m_mutex;

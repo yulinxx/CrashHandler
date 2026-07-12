@@ -1,4 +1,4 @@
-#include "CrashHandler/CrashHandler.h"
+#include "CrashHandlerInternal.h"
 #include "CrashHandlerImpl.h"
 
 #include <algorithm>
@@ -69,7 +69,7 @@ namespace CrashHandler
         return cleanOldDumps_nolock();
     }
 
-    const CrashHandlerConfig& CrashHandlerImpl::config() const
+    const CrashHandlerConfigData& CrashHandlerImpl::config() const
     {
         return m_config;
     }

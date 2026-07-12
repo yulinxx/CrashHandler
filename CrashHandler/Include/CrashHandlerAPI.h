@@ -13,14 +13,14 @@
 #else
 #define CRASHHANDLER_API
 #endif
-#elif defined(__APPLE__)
-#ifdef CRASHHANDLER_EXPORTS
-#define CRASHHANDLER_API __attribute__((visibility("default")))
 #else
 #define CRASHHANDLER_API
 #endif
+
+#ifdef __cplusplus
+#define CRASHHANDLER_C_API extern "C"
 #else
-#define CRASHHANDLER_API
+#define CRASHHANDLER_C_API extern
 #endif
 
 #endif

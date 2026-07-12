@@ -99,6 +99,11 @@ target_link_libraries(${LIB_NAME}
 # --- 版本信息 ---
 sanyi_add_version_info(${LIB_NAME} "${LIB_NAME}" "${LIB_DESCRIPTION}")
 
+option(SANYI_CRASHHANDLER_SYMBOLS "Generate debug symbols for CrashHandler" ON)
+if(SANYI_CRASHHANDLER_SYMBOLS)
+    sanyi_add_debug_symbols(${LIB_NAME})
+endif()
+
 # --- 构建信息 ---
 message(STATUS "[${LIB_NAME}]")
 message(STATUS "  Version: ${PROJECT_VERSION}")
