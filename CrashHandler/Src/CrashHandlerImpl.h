@@ -1,5 +1,4 @@
-#ifndef CRASHHANDLER_IMPL_H
-#define CRASHHANDLER_IMPL_H
+#pragma once
 
 #include "CrashHandlerInternal.h"
 
@@ -53,5 +52,3 @@ protected:
 std::unique_ptr<CrashHandlerImpl> createPlatformImpl();
 
 }
-
-#endif

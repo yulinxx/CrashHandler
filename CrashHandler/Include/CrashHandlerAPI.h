@@ -1,5 +1,4 @@
-#ifndef CRASHHANDLER_API_H
-#define CRASHHANDLER_API_H
+#pragma once
 
 #if defined(_WIN32) || defined(_WIN64)
 #ifdef CRASHHANDLER_EXPORTS
@@ -21,6 +20,4 @@
 #define CRASHHANDLER_C_API extern "C"
 #else
 #define CRASHHANDLER_C_API extern
-#endif
-
 #endif

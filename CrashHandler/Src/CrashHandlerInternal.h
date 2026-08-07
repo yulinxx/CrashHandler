@@ -1,5 +1,4 @@
-#ifndef CRASHHANDLER_INTERNAL_H
-#define CRASHHANDLER_INTERNAL_H
+#pragma once
 
 #include <cstdint>
 #include <functional>
@@ -82,5 +81,3 @@ private:
 DumpType dumpTypeFromC(int32_t value);
 
 }
-
-#endif

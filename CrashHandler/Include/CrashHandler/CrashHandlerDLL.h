@@ -1,5 +1,4 @@
-#ifndef CRASHHANDLER_CRASHHANDLER_DLL_H
-#define CRASHHANDLER_CRASHHANDLER_DLL_H
+#pragma once
 
 /**
  * @file CrashHandlerDLL.h
@@ -135,6 +134,4 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
