@@ -116,23 +116,19 @@ namespace CrashHandler
         }
 
     private:
-        static bool filterCallback(void* context, EXCEPTION_POINTERS* exinfo,
-            MDRawAssertionInfo* assertion)
+        static bool filterCallback(void* context, EXCEPTION_POINTERS* /*exinfo*/,
+            MDRawAssertionInfo* /*assertion*/)
         {
-            (void)exinfo;
-            (void)assertion;
             return context != nullptr;
         }
 
         static bool minidumpCallback(const wchar_t* dump_path,
             const wchar_t* minidump_id,
             void* context,
-            EXCEPTION_POINTERS* exinfo,
-            MDRawAssertionInfo* assertion,
+            EXCEPTION_POINTERS* /*exinfo*/,
+            MDRawAssertionInfo* /*assertion*/,
             bool succeeded)
         {
-            (void)exinfo;
-            (void)assertion;
 
             if (!context)
                 return succeeded;
