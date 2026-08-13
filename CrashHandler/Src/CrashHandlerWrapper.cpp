@@ -7,38 +7,38 @@ namespace CrashHandler
     {
         switch (value)
         {
-            case static_cast<int32_t>(DumpType::Normal):
-                return DumpType::Normal;
-            case static_cast<int32_t>(DumpType::WithDataSegs):
-                return DumpType::WithDataSegs;
-            case static_cast<int32_t>(DumpType::WithFullMemory):
-                return DumpType::WithFullMemory;
-            case static_cast<int32_t>(DumpType::WithHandleData):
-                return DumpType::WithHandleData;
-            case static_cast<int32_t>(DumpType::FilterMemory):
-                return DumpType::FilterMemory;
-            case static_cast<int32_t>(DumpType::ScanMemory):
-                return DumpType::ScanMemory;
-            case static_cast<int32_t>(DumpType::WithUnloadedModules):
-                return DumpType::WithUnloadedModules;
-            case static_cast<int32_t>(DumpType::WithIndirectlyReferencedMemory):
-                return DumpType::WithIndirectlyReferencedMemory;
-            case static_cast<int32_t>(DumpType::FilterModulePaths):
-                return DumpType::FilterModulePaths;
-            case static_cast<int32_t>(DumpType::WithProcessThreadData):
-                return DumpType::WithProcessThreadData;
-            case static_cast<int32_t>(DumpType::WithPrivateReadWriteMemory):
-                return DumpType::WithPrivateReadWriteMemory;
-            case static_cast<int32_t>(DumpType::WithoutOptionalData):
-                return DumpType::WithoutOptionalData;
-            case static_cast<int32_t>(DumpType::WithFullMemoryInfo):
-                return DumpType::WithFullMemoryInfo;
-            case static_cast<int32_t>(DumpType::WithThreadInfo):
-                return DumpType::WithThreadInfo;
-            case static_cast<int32_t>(DumpType::WithAllMemory):
-                return DumpType::WithAllMemory;
-            default:
-                return DumpType::Normal;
+        case static_cast<int32_t>(DumpType::Normal):
+            return DumpType::Normal;
+        case static_cast<int32_t>(DumpType::WithDataSegs):
+            return DumpType::WithDataSegs;
+        case static_cast<int32_t>(DumpType::WithFullMemory):
+            return DumpType::WithFullMemory;
+        case static_cast<int32_t>(DumpType::WithHandleData):
+            return DumpType::WithHandleData;
+        case static_cast<int32_t>(DumpType::FilterMemory):
+            return DumpType::FilterMemory;
+        case static_cast<int32_t>(DumpType::ScanMemory):
+            return DumpType::ScanMemory;
+        case static_cast<int32_t>(DumpType::WithUnloadedModules):
+            return DumpType::WithUnloadedModules;
+        case static_cast<int32_t>(DumpType::WithIndirectlyReferencedMemory):
+            return DumpType::WithIndirectlyReferencedMemory;
+        case static_cast<int32_t>(DumpType::FilterModulePaths):
+            return DumpType::FilterModulePaths;
+        case static_cast<int32_t>(DumpType::WithProcessThreadData):
+            return DumpType::WithProcessThreadData;
+        case static_cast<int32_t>(DumpType::WithPrivateReadWriteMemory):
+            return DumpType::WithPrivateReadWriteMemory;
+        case static_cast<int32_t>(DumpType::WithoutOptionalData):
+            return DumpType::WithoutOptionalData;
+        case static_cast<int32_t>(DumpType::WithFullMemoryInfo):
+            return DumpType::WithFullMemoryInfo;
+        case static_cast<int32_t>(DumpType::WithThreadInfo):
+            return DumpType::WithThreadInfo;
+        case static_cast<int32_t>(DumpType::WithAllMemory):
+            return DumpType::WithAllMemory;
+        default:
+            return DumpType::Normal;
         }
     }
 
@@ -131,4 +131,4 @@ namespace CrashHandler
             m_impl->setCrashCallback(m_pendingCallback);
         }
     }
-}
+}  // namespace CrashHandler

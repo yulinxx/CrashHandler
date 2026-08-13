@@ -5,7 +5,7 @@
 #include <string>
 
 #define CRASHHANDLER_STRINGIFY_IMPL(x) #x
-#define CRASHHANDLER_STRINGIFY(x) CRASHHANDLER_STRINGIFY_IMPL(x)
+#define CRASHHANDLER_STRINGIFY(x)      CRASHHANDLER_STRINGIFY_IMPL(x)
 
 namespace
 {
@@ -75,7 +75,7 @@ namespace
         std::memcpy(buffer, value.c_str(), value.size() + 1);
         return CRASHHANDLER_OK;
     }
-}
+}  // namespace
 
 extern "C"
 {
@@ -87,9 +87,8 @@ extern "C"
     const char* CrashHandler_GetVersionString(void)
     {
         static const char kVersionString[] =
-            CRASHHANDLER_STRINGIFY(CRASHHANDLER_VERSION_MAJOR) "."
-            CRASHHANDLER_STRINGIFY(CRASHHANDLER_VERSION_MINOR) "."
-            CRASHHANDLER_STRINGIFY(CRASHHANDLER_VERSION_PATCH);
+            CRASHHANDLER_STRINGIFY(CRASHHANDLER_VERSION_MAJOR) "." CRASHHANDLER_STRINGIFY(
+                CRASHHANDLER_VERSION_MINOR) "." CRASHHANDLER_STRINGIFY(CRASHHANDLER_VERSION_PATCH);
         return kVersionString;
     }
 
@@ -230,7 +229,7 @@ extern "C"
 
             engine.setCrashCallback([callback, userData](const std::string& dumpPath, bool succeeded) {
                 return callback(dumpPath.c_str(), succeeded ? 1 : 0, userData) != 0;
-                });
+            });
             setLastError(nullptr);
         }
         catch (...)

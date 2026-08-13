@@ -8,108 +8,109 @@
 namespace CrashHandler
 {
 
-class CrashHandlerMac : public CrashHandlerImpl
-{
-public:
-    CrashHandlerMac()
-        : m_exceptionHandler(nullptr)
+    class CrashHandlerMac : public CrashHandlerImpl
     {
-    }
+    public:
+        CrashHandlerMac()
+            : m_exceptionHandler(nullptr)
+        {
+        }
 
-    ~CrashHandlerMac() override
-    {
-        shutdown();
-    }
+        ~CrashHandlerMac() override
+        {
+            shutdown();
+        }
 
         bool initialize(const CrashHandlerConfigData& config) override
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
 
-        if (m_initialized)
+            if (m_initialized)
+            {
+                return true;
+            }
+
+            if (config.dumpPath.empty())
+            {
+                return false;
+            }
+
+            if (!ensureDirectoryExists(config.dumpPath))
+            {
+                return false;
+            }
+
+            m_config = config;
+
+            m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(
+                config.dumpPath, &filterCallback, &minidumpCallback, this, true, nullptr);
+
+            m_initialized = true;
+
+            cleanOldDumps_nolock();
+
             return true;
+        }
 
-        if (config.dumpPath.empty())
-            return false;
+        void shutdown() override
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            m_exceptionHandler.reset();
+            m_initialized = false;
+        }
 
-        if (!ensureDirectoryExists(config.dumpPath))
-            return false;
+        bool writeMinidump() override
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (!m_initialized || !m_exceptionHandler)
+            {
+                return false;
+            }
+            return m_exceptionHandler->WriteMinidump();
+        }
 
-        m_config = config;
+        bool isInitialized() const
+        {
+            return m_initialized;
+        }
 
-        m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(
-            config.dumpPath,
-            &filterCallback,
-            &minidumpCallback,
-            this,
-            true,
-            nullptr
-        );
+    private:
+        static bool filterCallback(void* context)
+        {
+            return context != nullptr;
+        }
 
-        m_initialized = true;
+        static bool minidumpCallback(const char* dump_path, const char* minidump_id, void* context, bool succeeded)
+        {
+            if (!context)
+            {
+                return succeeded;
+            }
 
-        cleanOldDumps_nolock();
+            auto* handler = static_cast<CrashHandlerMac*>(context);
 
-        return true;
-    }
+            std::string dumpPathStr;
+            if (dump_path && minidump_id)
+            {
+                dumpPathStr = std::string(dump_path) + "/" + minidump_id + ".dmp";
+            }
 
-    void shutdown() override
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        m_exceptionHandler.reset();
-        m_initialized = false;
-    }
+            handler->setLastDumpPath(dumpPathStr);
 
-    bool writeMinidump() override
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        if (!m_initialized || !m_exceptionHandler)
-            return false;
-        return m_exceptionHandler->WriteMinidump();
-    }
+            if (handler->m_crashCallback)
+            {
+                return handler->m_crashCallback(dumpPathStr, succeeded);
+            }
 
-    bool isInitialized() const
-    {
-        return m_initialized;
-    }
-
-private:
-    static bool filterCallback(void* context)
-    {
-        return context != nullptr;
-    }
-
-    static bool minidumpCallback(const char* dump_path,
-                               const char* minidump_id,
-                               void* context,
-                               bool succeeded)
-    {
-        if (!context)
             return succeeded;
-
-        auto* handler = static_cast<CrashHandlerMac*>(context);
-
-        std::string dumpPathStr;
-        if (dump_path && minidump_id)
-        {
-            dumpPathStr = std::string(dump_path) + "/" + minidump_id + ".dmp";
         }
 
-        handler->setLastDumpPath(dumpPathStr);
+        std::unique_ptr<google_breakpad::ExceptionHandler> m_exceptionHandler;
+    };
 
-        if (handler->m_crashCallback)
-        {
-            return handler->m_crashCallback(dumpPathStr, succeeded);
-        }
-
-        return succeeded;
+    std::unique_ptr<CrashHandlerImpl> createPlatformImpl()
+    {
+        return std::make_unique<CrashHandlerMac>();
     }
 
-    std::unique_ptr<google_breakpad::ExceptionHandler> m_exceptionHandler;
-};
-
-std::unique_ptr<CrashHandlerImpl> createPlatformImpl()
-{
-    return std::make_unique<CrashHandlerMac>();
-}
-
-}
+}  // namespace CrashHandler

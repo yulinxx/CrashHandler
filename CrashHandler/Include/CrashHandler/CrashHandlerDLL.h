@@ -21,7 +21,8 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define CRASHHANDLER_VERSION_MAJOR 1
@@ -32,10 +33,7 @@ extern "C" {
     (((uint32_t)(major) << 16) | ((uint32_t)(minor) << 8) | (uint32_t)(patch))
 
 #define CRASHHANDLER_VERSION \
-    CRASHHANDLER_MAKE_VERSION( \
-        CRASHHANDLER_VERSION_MAJOR, \
-        CRASHHANDLER_VERSION_MINOR, \
-        CRASHHANDLER_VERSION_PATCH)
+    CRASHHANDLER_MAKE_VERSION(CRASHHANDLER_VERSION_MAJOR, CRASHHANDLER_VERSION_MINOR, CRASHHANDLER_VERSION_PATCH)
 
     typedef enum CrashHandlerResult
     {
@@ -92,10 +90,7 @@ extern "C" {
      * @param userData 用户自定义数据
      * @return 非 0 沿用用户结果，0 沿用 Breakpad 默认行为
      */
-    typedef int (*CrashHandlerCallback)(
-        const char* dumpPath,
-        int succeeded,
-        void* userData);
+    typedef int (*CrashHandlerCallback)(const char* dumpPath, int succeeded, void* userData);
 
     CRASHHANDLER_C_API CRASHHANDLER_API uint32_t CrashHandler_GetVersion(void);
 
@@ -112,25 +107,17 @@ extern "C" {
     CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_WriteMinidump(void);
 
     CRASHHANDLER_C_API CRASHHANDLER_API void CrashHandler_SetCrashCallback(
-        CrashHandlerCallback callback,
-        void* userData);
+        CrashHandlerCallback callback, void* userData);
 
-    CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetLastDumpPath(
-        char* buffer,
-        size_t bufferSize);
+    CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetLastDumpPath(char* buffer, size_t bufferSize);
 
     CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetDumpFileCount(void);
 
-    CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetDumpFilePath(
-        int index,
-        char* buffer,
-        size_t bufferSize);
+    CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetDumpFilePath(int index, char* buffer, size_t bufferSize);
 
     CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_CleanOldDumps(void);
 
-    CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetLastErrorMessage(
-        char* buffer,
-        size_t bufferSize);
+    CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetLastErrorMessage(char* buffer, size_t bufferSize);
 
 #ifdef __cplusplus
 }

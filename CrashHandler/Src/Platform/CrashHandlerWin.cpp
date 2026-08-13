@@ -12,38 +12,38 @@ namespace CrashHandler
     {
         switch (type)
         {
-            case DumpType::Normal:
-                return MiniDumpNormal;
-            case DumpType::WithDataSegs:
-                return MiniDumpWithDataSegs;
-            case DumpType::WithFullMemory:
-                return MiniDumpWithFullMemory;
-            case DumpType::WithHandleData:
-                return MiniDumpWithHandleData;
-            case DumpType::FilterMemory:
-                return MiniDumpFilterMemory;
-            case DumpType::ScanMemory:
-                return MiniDumpScanMemory;
-            case DumpType::WithUnloadedModules:
-                return MiniDumpWithUnloadedModules;
-            case DumpType::WithIndirectlyReferencedMemory:
-                return MiniDumpWithIndirectlyReferencedMemory;
-            case DumpType::FilterModulePaths:
-                return MiniDumpFilterModulePaths;
-            case DumpType::WithProcessThreadData:
-                return MiniDumpWithProcessThreadData;
-            case DumpType::WithPrivateReadWriteMemory:
-                return MiniDumpWithPrivateReadWriteMemory;
-            case DumpType::WithoutOptionalData:
-                return MiniDumpWithoutOptionalData;
-            case DumpType::WithFullMemoryInfo:
-                return MiniDumpWithFullMemoryInfo;
-            case DumpType::WithThreadInfo:
-                return MiniDumpWithThreadInfo;
-            case DumpType::WithAllMemory:
-                return MiniDumpWithFullMemory;
-            default:
-                return MiniDumpNormal;
+        case DumpType::Normal:
+            return MiniDumpNormal;
+        case DumpType::WithDataSegs:
+            return MiniDumpWithDataSegs;
+        case DumpType::WithFullMemory:
+            return MiniDumpWithFullMemory;
+        case DumpType::WithHandleData:
+            return MiniDumpWithHandleData;
+        case DumpType::FilterMemory:
+            return MiniDumpFilterMemory;
+        case DumpType::ScanMemory:
+            return MiniDumpScanMemory;
+        case DumpType::WithUnloadedModules:
+            return MiniDumpWithUnloadedModules;
+        case DumpType::WithIndirectlyReferencedMemory:
+            return MiniDumpWithIndirectlyReferencedMemory;
+        case DumpType::FilterModulePaths:
+            return MiniDumpFilterModulePaths;
+        case DumpType::WithProcessThreadData:
+            return MiniDumpWithProcessThreadData;
+        case DumpType::WithPrivateReadWriteMemory:
+            return MiniDumpWithPrivateReadWriteMemory;
+        case DumpType::WithoutOptionalData:
+            return MiniDumpWithoutOptionalData;
+        case DumpType::WithFullMemoryInfo:
+            return MiniDumpWithFullMemoryInfo;
+        case DumpType::WithThreadInfo:
+            return MiniDumpWithThreadInfo;
+        case DumpType::WithAllMemory:
+            return MiniDumpWithFullMemory;
+        default:
+            return MiniDumpNormal;
         }
     }
 
@@ -65,28 +65,32 @@ namespace CrashHandler
             std::lock_guard<std::mutex> lock(m_mutex);
 
             if (m_initialized)
+            {
                 return true;
+            }
 
             if (config.dumpPath.empty())
+            {
                 return false;
+            }
 
             if (!ensureDirectoryExists(config.dumpPath))
+            {
                 return false;
+            }
 
             m_config = config;
 
             std::wstring dumpPathW = utf8ToWide(config.dumpPath);
 
-            m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(
-                dumpPathW,
+            m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(dumpPathW,
                 &filterCallback,
                 &minidumpCallback,
                 this,
                 google_breakpad::ExceptionHandler::HANDLER_ALL,
                 dumpTypeToMinidumpType(config.dumpType),
                 static_cast<const wchar_t*>(nullptr),
-                static_cast<const google_breakpad::CustomClientInfo*>(nullptr)
-            );
+                static_cast<const google_breakpad::CustomClientInfo*>(nullptr));
 
             m_initialized = true;
 
@@ -106,7 +110,9 @@ namespace CrashHandler
         {
             std::lock_guard<std::mutex> lock(m_mutex);
             if (!m_initialized || !m_exceptionHandler)
+            {
                 return false;
+            }
             return m_exceptionHandler->WriteMinidump();
         }
 
@@ -116,8 +122,7 @@ namespace CrashHandler
         }
 
     private:
-        static bool filterCallback(void* context, EXCEPTION_POINTERS* /*exinfo*/,
-            MDRawAssertionInfo* /*assertion*/)
+        static bool filterCallback(void* context, EXCEPTION_POINTERS* /*exinfo*/, MDRawAssertionInfo* /*assertion*/)
         {
             return context != nullptr;
         }
@@ -131,7 +136,9 @@ namespace CrashHandler
         {
 
             if (!context)
+            {
                 return succeeded;
+            }
 
             auto* handler = static_cast<CrashHandlerWin*>(context);
 
@@ -158,11 +165,15 @@ namespace CrashHandler
         static std::wstring utf8ToWide(const std::string& utf8)
         {
             if (utf8.empty())
+            {
                 return L"";
+            }
 
             int len = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
             if (len <= 0)
+            {
                 return L"";
+            }
 
             std::wstring wide(len, L'\0');
             MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, &wide[0], len);
@@ -173,11 +184,15 @@ namespace CrashHandler
         static std::string wideToUtf8(const std::wstring& wide)
         {
             if (wide.empty())
+            {
                 return "";
+            }
 
             int len = WideCharToMultiByte(CP_UTF8, 0, wide.c_str(), -1, nullptr, 0, nullptr, nullptr);
             if (len <= 0)
+            {
                 return "";
+            }
 
             std::string utf8(len, '\0');
             WideCharToMultiByte(CP_UTF8, 0, wide.c_str(), -1, &utf8[0], len, nullptr, nullptr);
@@ -192,4 +207,4 @@ namespace CrashHandler
     {
         return std::make_unique<CrashHandlerWin>();
     }
-}
+}  // namespace CrashHandler

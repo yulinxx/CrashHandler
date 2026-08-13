@@ -8,10 +8,10 @@
 #include <filesystem>
 
 #ifdef _WIN32
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <windows.h>
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+    #include <windows.h>
 #endif
 
 namespace fs = std::filesystem;
@@ -20,11 +20,15 @@ static std::string pathToUtf8(const fs::path& p)
 {
 #ifdef _WIN32
     if (p.empty())
+    {
         return {};
+    }
     const std::wstring w = p.native();
     int len = WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, nullptr, 0, nullptr, nullptr);
     if (len <= 0)
+    {
         return {};
+    }
     std::string s(len - 1, '\0');
     WideCharToMultiByte(CP_UTF8, 0, w.c_str(), -1, s.data(), len, nullptr, nullptr);
     return s;
@@ -99,13 +103,17 @@ namespace CrashHandler
         const std::string& dumpPath = m_config.dumpPath;
 
         if (dumpPath.empty())
+        {
             return files;
+        }
 
         try
         {
             fs::path dumpFsPath = fs::u8path(dumpPath);
             if (!fs::exists(dumpFsPath))
+            {
                 return files;
+            }
 
             std::vector<fs::path> dumpPaths;
             for (const auto& entry : fs::directory_iterator(dumpFsPath))
@@ -116,13 +124,14 @@ namespace CrashHandler
                 }
             }
 
-            std::sort(dumpPaths.begin(), dumpPaths.end(),
-                [](const fs::path& a, const fs::path& b) {
-                    return fs::last_write_time(a) > fs::last_write_time(b);
-                });
+            std::sort(dumpPaths.begin(), dumpPaths.end(), [](const fs::path& a, const fs::path& b) {
+                return fs::last_write_time(a) > fs::last_write_time(b);
+            });
 
             for (const auto& p : dumpPaths)
+            {
                 files.push_back(pathToUtf8(p));
+            }
         }
         catch (...)
         {
@@ -134,7 +143,9 @@ namespace CrashHandler
     int CrashHandlerImpl::cleanOldDumps_nolock()
     {
         if (m_config.maxDumpFiles <= 0)
+        {
             return 0;
+        }
 
         std::vector<std::string> files = getDumpFiles_nolock();
         int removed = 0;
@@ -144,7 +155,9 @@ namespace CrashHandler
             try
             {
                 if (fs::remove(fs::u8path(files[i])))
+                {
                     ++removed;
+                }
             }
             catch (...)
             {
@@ -161,13 +174,17 @@ namespace CrashHandler
     bool CrashHandlerImpl::ensureDirectoryExists(const std::string& path)
     {
         if (path.empty())
+        {
             return false;
+        }
 
         try
         {
             fs::path dir = fs::u8path(path);
             if (fs::exists(dir))
+            {
                 return fs::is_directory(dir);
+            }
             return fs::create_directories(dir);
         }
         catch (...)
@@ -187,17 +204,10 @@ namespace CrashHandler
 #endif
 
         std::ostringstream oss;
-        oss << appName << "_"
-            << std::setfill('0')
-            << std::setw(4) << (tm_buf.tm_year + 1900)
-            << std::setw(2) << (tm_buf.tm_mon + 1)
-            << std::setw(2) << tm_buf.tm_mday
-            << "_"
-            << std::setw(2) << tm_buf.tm_hour
-            << std::setw(2) << tm_buf.tm_min
-            << std::setw(2) << tm_buf.tm_sec
-            << ".dmp";
+        oss << appName << "_" << std::setfill('0') << std::setw(4) << (tm_buf.tm_year + 1900) << std::setw(2)
+            << (tm_buf.tm_mon + 1) << std::setw(2) << tm_buf.tm_mday << "_" << std::setw(2) << tm_buf.tm_hour
+            << std::setw(2) << tm_buf.tm_min << std::setw(2) << tm_buf.tm_sec << ".dmp";
 
         return oss.str();
     }
-}
+}  // namespace CrashHandler

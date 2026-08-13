@@ -1,23 +1,23 @@
 #pragma once
 
 #if defined(_WIN32) || defined(_WIN64)
-#ifdef CRASHHANDLER_EXPORTS
-#define CRASHHANDLER_API __declspec(dllexport)
-#else
-#define CRASHHANDLER_API __declspec(dllimport)
-#endif
+    #ifdef CRASHHANDLER_EXPORTS
+        #define CRASHHANDLER_API __declspec(dllexport)
+    #else
+        #define CRASHHANDLER_API __declspec(dllimport)
+    #endif
 #elif defined(__GNUC__) || defined(__clang__)
-#ifdef CRASHHANDLER_EXPORTS
-#define CRASHHANDLER_API __attribute__((visibility("default")))
+    #ifdef CRASHHANDLER_EXPORTS
+        #define CRASHHANDLER_API __attribute__((visibility("default")))
+    #else
+        #define CRASHHANDLER_API
+    #endif
 #else
-#define CRASHHANDLER_API
-#endif
-#else
-#define CRASHHANDLER_API
+    #define CRASHHANDLER_API
 #endif
 
 #ifdef __cplusplus
-#define CRASHHANDLER_C_API extern "C"
+    #define CRASHHANDLER_C_API extern "C"
 #else
-#define CRASHHANDLER_C_API extern
+    #define CRASHHANDLER_C_API extern
 #endif
