@@ -58,8 +58,7 @@ CMakeUserPresets.json
 # ---- 调试信息 ----
 *.dwo
 *.dump
-core
-core.*
+
 
 # ---- IDE: Visual Studio ----
 .vs/
