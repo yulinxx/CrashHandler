@@ -210,4 +210,42 @@ namespace CrashHandler
 
         return oss.str();
     }
+
+    bool CrashHandlerImpl::renameDumpFile(const std::string& srcUtf8Path,
+        const std::string& appName,
+        std::string& outUtf8Path)
+    {
+        outUtf8Path = srcUtf8Path;
+
+        if (srcUtf8Path.empty() || appName.empty())
+        {
+            return false;
+        }
+
+        try
+        {
+            fs::path src = fs::u8path(srcUtf8Path);
+            if (!fs::exists(src))
+            {
+                return false;
+            }
+
+            fs::path dst = src.parent_path() / fs::u8path(generateDumpFileName(appName));
+            int index = 1;
+            while (fs::exists(dst))
+            {
+                dst = src.parent_path()
+                    / fs::u8path(generateDumpFileName(appName) + "." + std::to_string(index));
+                ++index;
+            }
+
+            fs::rename(src, dst);
+            outUtf8Path = pathToUtf8(dst);
+            return true;
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
 }  // namespace CrashHandler

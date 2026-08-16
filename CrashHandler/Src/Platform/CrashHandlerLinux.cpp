@@ -104,6 +104,12 @@ namespace CrashHandler
             auto* handler = static_cast<CrashHandlerLinux*>(context);
 
             std::string dumpPath = descriptor.path();
+            std::string renamedPath;
+            if (succeeded && CrashHandlerImpl::renameDumpFile(dumpPath, handler->m_config.appName, renamedPath))
+            {
+                dumpPath = renamedPath;
+            }
+
             handler->setLastDumpPath(dumpPath);
 
             if (handler->m_crashCallback)

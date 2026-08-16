@@ -38,6 +38,12 @@ namespace CrashHandler
         static bool ensureDirectoryExists(const std::string& path);
         static std::string generateDumpFileName(const std::string& appName);
 
+        /// 将 Breakpad 生成的 GUID 文件名重命名为自定义名（appName_时间戳.dmp）。
+        /// 成功时 outUtf8Path 输出新路径；失败（源不存在等）保持原路径。
+        static bool renameDumpFile(const std::string& srcUtf8Path,
+            const std::string& appName,
+            std::string& outUtf8Path);
+
     protected:
         void setCrashCallback_nolock(CrashCallback callback);
         std::string getLastDumpPath_nolock() const;

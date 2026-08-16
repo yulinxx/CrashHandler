@@ -95,6 +95,12 @@ namespace CrashHandler
                 dumpPathStr = std::string(dump_path) + "/" + minidump_id + ".dmp";
             }
 
+            std::string renamedPath;
+            if (succeeded && CrashHandlerImpl::renameDumpFile(dumpPathStr, handler->m_config.appName, renamedPath))
+            {
+                dumpPathStr = renamedPath;
+            }
+
             handler->setLastDumpPath(dumpPathStr);
 
             if (handler->m_crashCallback)

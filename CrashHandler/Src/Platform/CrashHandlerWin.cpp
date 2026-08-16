@@ -152,6 +152,12 @@ namespace CrashHandler
                 dumpPathStr = wideToUtf8(fullPath);
             }
 
+            std::string renamedPath;
+            if (succeeded && CrashHandlerImpl::renameDumpFile(dumpPathStr, handler->m_config.appName, renamedPath))
+            {
+                dumpPathStr = renamedPath;
+            }
+
             handler->setLastDumpPath(dumpPathStr);
 
             if (handler->m_crashCallback)
