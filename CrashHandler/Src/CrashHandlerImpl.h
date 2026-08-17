@@ -13,8 +13,10 @@ namespace CrashHandler
     class CrashHandlerImpl
     {
     public:
+        CrashHandlerImpl() = default;
         virtual ~CrashHandlerImpl() = default;
 
+    public:
         virtual bool initialize(const CrashHandlerConfigData& config) = 0;
         virtual void shutdown() = 0;
 
@@ -51,6 +53,7 @@ namespace CrashHandler
         std::vector<std::string> getDumpFiles_nolock() const;
         int cleanOldDumps_nolock();
 
+    protected:
         CrashHandlerConfigData m_config;
         CrashCallback m_crashCallback;
         std::string m_lastDumpPath;
