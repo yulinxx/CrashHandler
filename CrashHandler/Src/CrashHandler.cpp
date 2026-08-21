@@ -211,9 +211,8 @@ namespace CrashHandler
         return oss.str();
     }
 
-    bool CrashHandlerImpl::renameDumpFile(const std::string& srcUtf8Path,
-        const std::string& appName,
-        std::string& outUtf8Path)
+    bool CrashHandlerImpl::renameDumpFile(
+        const std::string& srcUtf8Path, const std::string& appName, std::string& outUtf8Path)
     {
         outUtf8Path = srcUtf8Path;
 
@@ -234,8 +233,7 @@ namespace CrashHandler
             int index = 1;
             while (fs::exists(dst))
             {
-                dst = src.parent_path()
-                    / fs::u8path(generateDumpFileName(appName) + "." + std::to_string(index));
+                dst = src.parent_path() / fs::u8path(generateDumpFileName(appName) + "." + std::to_string(index));
                 ++index;
             }
 

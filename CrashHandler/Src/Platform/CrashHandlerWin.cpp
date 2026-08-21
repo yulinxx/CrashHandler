@@ -134,7 +134,6 @@ namespace CrashHandler
             MDRawAssertionInfo* /*assertion*/,
             bool succeeded)
         {
-
             if (!context)
             {
                 return succeeded;
