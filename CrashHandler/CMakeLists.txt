@@ -79,3 +79,12 @@ sanyi_add_shared_library(${LIB_NAME}
             unofficial::breakpad::libbreakpad
             unofficial::breakpad::libbreakpad_client
 )
+
+message(STATUS "----------------------------------------")
+
+sanyi_export_imported_target(${LIB_NAME}
+    LIB_NAME "${LIB_NAME}"
+    PUBLIC_INCLUDE_DIRS
+        "${CMAKE_CURRENT_SOURCE_DIR}/Include"
+    INTERFACE_LINK_LIBRARIES
+)
