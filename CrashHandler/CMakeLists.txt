@@ -1,4 +1,10 @@
-﻿cmake_minimum_required(VERSION 4.3)
+cmake_minimum_required(VERSION 4.3)
+
+# --- 模块编译开关 ---
+# 如果父项目未定义此开关，则默认为 OFF
+if(NOT DEFINED BUILD_CRASHHANDLER)
+    set(BUILD_CRASHHANDLER OFF)
+endif()
 
 # --- 模块元信息 ---
 set(LIB_NAME "CrashHandler")
@@ -33,8 +39,13 @@ file(GLOB_RECURSE LIB_HEADERS CONFIGURE_DEPENDS
 list(FILTER LIB_SOURCES EXCLUDE REGEX "${SANYI_SOURCE_EXCLUDE_REGEX}")
 list(FILTER LIB_HEADERS EXCLUDE REGEX "${SANYI_HEADER_EXCLUDE_REGEX}")
 
-# --- 第三方依赖 ---
-find_package(unofficial-breakpad CONFIG REQUIRED)
+# --- 第三方依赖（可选）---
+find_package(unofficial-breakpad CONFIG QUIET)
+if(NOT unofficial-breakpad_FOUND)
+    message(WARNING "unofficial-breakpad not found. CrashHandler will not be built. "
+                   "Please install breakpad via vcpkg: vcpkg install breakpad:x64-windows")
+    return()
+endif()
 
 # --- 平台相关源文件 ---
 list(REMOVE_ITEM LIB_SOURCES
