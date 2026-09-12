@@ -47,24 +47,13 @@ if(NOT unofficial-breakpad_FOUND)
     return()
 endif()
 
-# --- 平台相关源文件 ---
-list(REMOVE_ITEM LIB_SOURCES
-    "${CMAKE_CURRENT_SOURCE_DIR}/Src/Platform/CrashHandlerWin.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Src/Platform/CrashHandlerMac.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Src/Platform/CrashHandlerLinux.cpp"
-)
+# --- 平台相关源文件：排除非当前平台的实现 ---
 if(WIN32)
-    list(APPEND LIB_SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/Src/Platform/CrashHandlerWin.cpp"
-    )
+    list(FILTER LIB_SOURCES EXCLUDE REGEX ".*/CrashHandler(Mac|Linux)\\.cpp$")
 elseif(APPLE)
-    list(APPEND LIB_SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/Src/Platform/CrashHandlerMac.cpp"
-    )
-elseif(UNIX)
-    list(APPEND LIB_SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/Src/Platform/CrashHandlerLinux.cpp"
-    )
+    list(FILTER LIB_SOURCES EXCLUDE REGEX ".*/CrashHandler(Win|Linux)\\.cpp$")
+else()
+    list(FILTER LIB_SOURCES EXCLUDE REGEX ".*/CrashHandler(Win|Mac)\\.cpp$")
 endif()
 
 # 统一入口已无条件生成调试符号（version.rc / PDB-DWARF），
