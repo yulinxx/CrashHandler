@@ -80,6 +80,26 @@ sanyi_add_shared_library(${LIB_NAME}
             unofficial::breakpad::libbreakpad_client
 )
 
+# --- 单元测试 ---
+# 由根 CMakeLists 的 BUILD_CRASHHANDLER_TESTS 控制。
+if(BUILD_CRASHHANDLER_TESTS)
+    if(TARGET GTest::gtest OR GTest_FOUND)
+        add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Test" "${CMAKE_CURRENT_BINARY_DIR}/CrashHandlerTests")
+    else()
+        message(STATUS "  CrashHandler tests: DISABLED (GTest not found)")
+    endif()
+endif()
+
+# --- 状态输出 ---
+message(STATUS "[${LIB_NAME}]")
+message(STATUS "  Version: ${PROJECT_VERSION}")
+message(STATUS "  Platform: ${CMAKE_SYSTEM_NAME}(${CMAKE_SYSTEM_PROCESSOR})")
+message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
+if(BUILD_CRASHHANDLER_TESTS)
+    message(STATUS "  Tests: ENABLED")
+else()
+    message(STATUS "  Tests: DISABLED")
+endif()
 message(STATUS "----------------------------------------")
 
 sanyi_export_imported_target(${LIB_NAME}
