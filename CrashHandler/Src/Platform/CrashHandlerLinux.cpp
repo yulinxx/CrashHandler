@@ -1,5 +1,6 @@
 #include "CrashHandlerImpl.h"
 
+#include <filesystem>
 #include <string>
 #include <memory>
 #include <cstring>
@@ -8,6 +9,7 @@
 
 namespace CrashHandler
 {
+    // 将 DumpType 枚举转换为 Breakpad 的 MinidumpType
 
     static google_breakpad::MinidumpType dumpTypeToMinidumpType(DumpType type)
     {
@@ -55,8 +57,11 @@ namespace CrashHandler
 
             m_config = config;
 
+            // 使用 std::filesystem::path 确保路径格式正确（统一使用 / 分隔符）
+            const std::filesystem::path dumpPathFs(config.dumpPath);
+
             m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(
-                config.dumpPath, &filterCallback, &minidumpCallback, this, true, -1);
+                dumpPathFs.string(), &filterCallback, &minidumpCallback, this, true, -1);
 
             m_initialized = true;
 

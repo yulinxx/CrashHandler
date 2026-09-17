@@ -1,5 +1,6 @@
 #include "CrashHandlerImpl.h"
 
+#include <filesystem>
 #include <string>
 #include <memory>
 
@@ -92,7 +93,10 @@ namespace CrashHandler
             std::string dumpPathStr;
             if (dump_path && minidump_id)
             {
-                dumpPathStr = std::string(dump_path) + "/" + minidump_id + ".dmp";
+                // 使用 std::filesystem::path 拼接路径，跨平台兼容
+                std::filesystem::path fullPath = std::filesystem::path(dump_path) / minidump_id;
+                fullPath += ".dmp";
+                dumpPathStr = fullPath.string();
             }
 
             std::string renamedPath;

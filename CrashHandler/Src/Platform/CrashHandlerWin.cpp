@@ -1,5 +1,6 @@
 #include "CrashHandlerImpl.h"
 
+#include <filesystem>
 #include <windows.h>
 #include <string>
 #include <memory>
@@ -81,9 +82,10 @@ namespace CrashHandler
 
             m_config = config;
 
-            std::wstring dumpPathW = utf8ToWide(config.dumpPath);
+            // 使用 std::filesystem::path 直接获取 wstring，避免手动 UTF-8 转换
+            std::filesystem::path dumpPathFs(config.dumpPath);
 
-            m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(dumpPathW,
+            m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(dumpPathFs.wstring(),
                 &filterCallback,
                 &minidumpCallback,
                 this,
@@ -144,11 +146,10 @@ namespace CrashHandler
             std::string dumpPathStr;
             if (dump_path && minidump_id)
             {
-                std::wstring fullPath(dump_path);
-                fullPath += L"\\";
-                fullPath += minidump_id;
+                // 使用 std::filesystem::path 拼接路径，跨平台兼容
+                std::filesystem::path fullPath = std::filesystem::path(dump_path) / minidump_id;
                 fullPath += L".dmp";
-                dumpPathStr = wideToUtf8(fullPath);
+                dumpPathStr = wideToUtf8(fullPath.wstring());
             }
 
             std::string renamedPath;
@@ -165,25 +166,6 @@ namespace CrashHandler
             }
 
             return succeeded;
-        }
-
-        static std::wstring utf8ToWide(const std::string& utf8)
-        {
-            if (utf8.empty())
-            {
-                return L"";
-            }
-
-            int len = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
-            if (len <= 0)
-            {
-                return L"";
-            }
-
-            std::wstring wide(len, L'\0');
-            MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, &wide[0], len);
-            wide.resize(len - 1);
-            return wide;
         }
 
         static std::string wideToUtf8(const std::wstring& wide)
