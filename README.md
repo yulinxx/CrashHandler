@@ -120,13 +120,13 @@ main()
 
 ### 各平台 dump 存储路径
 
-路径由 `QStandardPaths::AppLocalDataLocation + "/crashes"` 决定（需先设置 Qt 组织名与应用名）：
+路径由 `AppPathManager::crashDumpsDir()` 决定（统一通过 AppPathManager 管理）：
 
 | 平台 | 典型路径 |
 |------|---------|
-| **Windows** | `C:/Users/<user>/AppData/Local/SanYi/SanYiCAD/crashes/` |
-| **macOS** | `~/Library/Application Support/SanYi/SanYiCAD/crashes/` |
-| **Linux** | `~/.local/share/SanYi/SanYiCAD/crashes/` |
+| **Windows** | `C:/Users/<user>/AppData/Local/SanYiCAD/crashes/` |
+| **macOS** | `~/Library/Application Support/SanYiCAD/crashes/` |
+| **Linux** | `~/.local/share/SanYiCAD/crashes/` |
 
 > 若 `QStandardPaths` 不可用，回退到 `<exe目录>/crashes/`。
 
