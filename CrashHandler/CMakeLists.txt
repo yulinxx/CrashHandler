@@ -56,10 +56,6 @@ else()
     list(FILTER LIB_SOURCES EXCLUDE REGEX ".*/CrashHandler(Win|Mac)\\.cpp$")
 endif()
 
-# 统一入口已无条件生成调试符号（version.rc / PDB-DWARF），
-# 该 option 仅为兼容旧构建参数保留，实际始终生效。
-option(SANYI_CRASHHANDLER_SYMBOLS "Generate debug symbols for CrashHandler" ON)
-
 # --- 统一入口创建 DLL ---
 sanyi_add_shared_library(${LIB_NAME}
     FOLDER "${LIB_FOLDER}"
