@@ -2,7 +2,6 @@
 
 add_subdirectory(CrashHandler)
 
-option(BUILD_CRASHHANDLER_TESTS "Build CrashHandler unit tests" OFF)
 if(BUILD_CRASHHANDLER_TESTS)
     add_subdirectory(Test)
     message(STATUS "  CrashHandler tests: ENABLED")
