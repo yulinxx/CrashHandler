@@ -366,4 +366,33 @@ extern "C"
         buffer[bufferSize - 1] = '\0';
         return CRASHHANDLER_OK;
     }
+
+    const char* CrashHandler_StatusText(int32_t status)
+    {
+        switch (status)
+        {
+        case CRASHHANDLER_OK:
+            return "OK";
+        case CRASHHANDLER_ERR_INVALID_ARG:
+            return "Invalid argument";
+        case CRASHHANDLER_ERR_NULL_POINTER:
+            return "Null pointer";
+        case CRASHHANDLER_ERR_NOT_INITIALIZED:
+            return "Not initialized";
+        case CRASHHANDLER_ERR_ALREADY_INITIALIZED:
+            return "Already initialized";
+        case CRASHHANDLER_ERR_IO:
+            return "IO error";
+        case CRASHHANDLER_ERR_BUFFER_TOO_SMALL:
+            return "Buffer too small";
+        case CRASHHANDLER_ERR_OUT_OF_RANGE:
+            return "Out of range";
+        case CRASHHANDLER_ERR_VERSION_MISMATCH:
+            return "Version mismatch";
+        case CRASHHANDLER_ERR_INTERNAL:
+            return "Internal error";
+        default:
+            return "Unknown error";
+        }
+    }
 }

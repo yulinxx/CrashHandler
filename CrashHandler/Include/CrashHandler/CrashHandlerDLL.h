@@ -119,6 +119,8 @@ extern "C"
 
     CRASHHANDLER_C_API CRASHHANDLER_API int CrashHandler_GetLastErrorMessage(char* buffer, size_t bufferSize);
 
+    CRASHHANDLER_C_API CRASHHANDLER_API const char* CrashHandler_StatusText(int32_t status);
+
 #ifdef __cplusplus
 }
 #endif
