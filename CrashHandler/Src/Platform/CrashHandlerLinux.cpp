@@ -9,19 +9,8 @@
 
 namespace CrashHandler
 {
-    // 将 DumpType 枚举转换为 Breakpad 的 MinidumpType
-
-    static google_breakpad::MinidumpType dumpTypeToMinidumpType(DumpType type)
-    {
-        switch (type)
-        {
-        case DumpType::WithFullMemory:
-        case DumpType::WithAllMemory:
-            return google_breakpad::MD_FULL_DUMP;
-        default:
-            return google_breakpad::MD_NORMAL_DUMP;
-        }
-    }
+    // Linux 版 breakpad 的 ExceptionHandler 不暴露 dump 类型开关
+    // （MinidumpDescriptor 只有目录/大小限制），因此 DumpType 在此平台上被忽略。
 
     class CrashHandlerLinux : public CrashHandlerImpl
     {
@@ -60,8 +49,9 @@ namespace CrashHandler
             // 使用 std::filesystem::path 确保路径格式正确（统一使用 / 分隔符）
             const std::filesystem::path dumpPathFs(config.dumpPath);
 
+            const google_breakpad::MinidumpDescriptor descriptor(dumpPathFs.string());
             m_exceptionHandler = std::make_unique<google_breakpad::ExceptionHandler>(
-                dumpPathFs.string(), &filterCallback, &minidumpCallback, this, true, -1);
+                descriptor, &filterCallback, &minidumpCallback, this, true, -1);
 
             m_initialized = true;
 
