@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 4.3)
 
-# --- 模块编译开关 ---
-# 如果父项目未定义此开关，则默认为 OFF
-if(NOT DEFINED BUILD_CRASHHANDLER)
-    set(BUILD_CRASHHANDLER OFF)
-endif()
-
 # --- 模块元信息 ---
 set(LIB_NAME "CrashHandler")
 set(LIB_FOLDER "Core")
@@ -77,9 +71,12 @@ sanyi_add_shared_library(${LIB_NAME}
 )
 
 # --- 单元测试 ---
-# 由根 CMakeLists 的 BUILD_CRASHHANDLER_TESTS 控制。
+# 注意：根 CMakeLists 直接 add_subdirectory(CrashHandler/CrashHandler)，不会经过父级
+# CrashHandler/CMakeLists.txt，因此测试必须挂在这里，否则 BUILD_CRASHHANDLER_TESTS=ON
+# 也永远不生成 CrashHandlerTests 目标。
 if(BUILD_CRASHHANDLER_TESTS)
     if((TARGET GTest::gtest OR GTest_FOUND) AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../Test/CMakeLists.txt")
+        enable_testing()
         add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Test" "${CMAKE_CURRENT_BINARY_DIR}/CrashHandlerTests")
     else()
         message(STATUS "  CrashHandler tests: DISABLED (GTest or Test directory not found)")

@@ -105,7 +105,9 @@ namespace CrashHandler
                 dumpPath = renamedPath;
             }
 
-            handler->setLastDumpPath(dumpPath);
+            // 回调发生在持锁上下文（writeMinidump 持 m_mutex）或崩溃上下文
+            // （崩溃线程可能正持有 m_mutex），必须用 _nolock 版本，否则同线程死锁。
+            handler->setLastDumpPath_nolock(dumpPath);
 
             if (handler->m_crashCallback)
             {
