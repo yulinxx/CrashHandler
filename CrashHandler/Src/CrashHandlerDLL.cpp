@@ -9,6 +9,11 @@
 
 namespace
 {
+    // thread_local 错误缓冲的跨 DLL 内存契约（Engraving / Licensing 的 C API 同款）：
+    // - 每个 DLL 一份、每线程一份；指针绝不出本 DLL，
+    //   调用方只能通过 Xxx_GetLastErrorMessage 拷贝出去；
+    // - 因此刻意不与其他模块共用一份实现 —— 一旦共享就得把借用指针传出 DLL，
+    //   那才是 thread_local 跨 ABI 的雷区（见 FileIO IrProjector 的同类契约注释）。
     thread_local char g_lastError[512] = {};
 
     void setLastError(const char* message)
