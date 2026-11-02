@@ -64,10 +64,9 @@ sanyi_add_shared_library(${LIB_NAME}
         "${CMAKE_CURRENT_SOURCE_DIR}/Include"
     PRIVATE_INCLUDE_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}/Src"
-    LINK_LIBRARIES
-        PRIVATE
-            unofficial::breakpad::libbreakpad
-            unofficial::breakpad::libbreakpad_client
+    PRIVATE_LINK_LIBRARIES
+        unofficial::breakpad::libbreakpad
+        unofficial::breakpad::libbreakpad_client
 )
 
 # --- 单元测试 ---
