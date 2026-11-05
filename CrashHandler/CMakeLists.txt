@@ -71,9 +71,10 @@ sanyi_add_shared_library(${LIB_NAME}
 
 # --- 单元测试 ---
 # 注意：根 CMakeLists 直接 add_subdirectory(CrashHandler/CrashHandler)，不会经过父级
-# CrashHandler/CMakeLists.txt，因此测试必须挂在这里，否则 BUILD_CRASHHANDLER_TESTS=ON
+# CrashHandler/CMakeLists.txt，因此测试必须挂在这里，否则总开关打开时
 # 也永远不生成 CrashHandlerTests 目标。
-if(BUILD_CRASHHANDLER_TESTS)
+sanyi_module_tests_enabled(CRASHHANDLER _crashhandler_tests)
+if(_crashhandler_tests)
     if((TARGET GTest::gtest OR GTest_FOUND) AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../Test/CMakeLists.txt")
         enable_testing()
         add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Test" "${CMAKE_CURRENT_BINARY_DIR}/CrashHandlerTests")
@@ -87,11 +88,6 @@ message(STATUS "[${LIB_NAME}]")
 message(STATUS "  Version: ${PROJECT_VERSION}")
 message(STATUS "  Platform: ${CMAKE_SYSTEM_NAME}(${CMAKE_SYSTEM_PROCESSOR})")
 message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
-if(BUILD_CRASHHANDLER_TESTS)
-    message(STATUS "  Tests: ENABLED")
-else()
-    message(STATUS "  Tests: DISABLED")
-endif()
 message(STATUS "----------------------------------------")
 
 sanyi_export_imported_target(${LIB_NAME}

@@ -1,5 +1,5 @@
 # CrashHandler 模块单元测试配置
-# 挂载点：内层 CrashHandler/CrashHandler/CMakeLists.txt（BUILD_CRASHHANDLER_TESTS=ON 时），
+# 挂载点：内层 CrashHandler/CrashHandler/CMakeLists.txt（BUILD_TESTS=ON 时），
 # 根工程与独立构建都经由内层进来，此处不得被外层重复 add_subdirectory。
 
 # 查找 GTest 包（独立构建下由外层 sanyi_find_gtest() 预先降级过开关）

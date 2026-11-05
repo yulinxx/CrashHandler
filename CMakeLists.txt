@@ -17,13 +17,13 @@
 #      没有源码级兄弟 DLL 需要拉入。breakpad 缺失时内层只告警并跳过建 target。
 #
 #   3) 测试由内层 CrashHandler/CrashHandler/CMakeLists.txt 在
-#      BUILD_CRASHHANDLER_TESTS=ON 时挂载，本文件不得重复 add_subdirectory(Test)。
+#      BUILD_TESTS=ON 时挂载，本文件不得重复 add_subdirectory(Test)。
 #
 # 用法：
 #   cmake -S CrashHandler -B CrashHandler/build
 #   cmake --build CrashHandler/build --config Release
 #   ctest --test-dir CrashHandler/build -C Release
-#   cmake -S CrashHandler -B CrashHandler/build -DBUILD_CRASHHANDLER_TESTS=OFF  # 只编库
+#   cmake -S CrashHandler -B CrashHandler/build -DBUILD_TESTS=OFF  # 只编库
 #   cmake -S CrashHandler -B CrashHandler/build -DBUILD_CRASHHANDLER_EXAMPLE=OFF # 不编示例
 # ============================================================================
 
@@ -43,12 +43,10 @@ sanyi_setup_compiler_options()
 option(BUILD_CRASHHANDLER_EXAMPLE "Build CrashHandler usage example" ON)
 
 # --- 测试 -------------------------------------------------------------------
-sanyi_only_own_tests(BUILD_CRASHHANDLER_TESTS)
-if(BUILD_CRASHHANDLER_TESTS)
-    sanyi_find_gtest()
-endif()
+sanyi_only_own_tests(CRASHHANDLER)
+sanyi_finalize_tests()
 
-# 内层：创建 CrashHandler DLL、挂载测试（BUILD_CRASHHANDLER_TESTS 时）、输出状态
+# 内层：创建 CrashHandler DLL、挂载测试（BUILD_TESTS 时）、输出状态
 add_subdirectory(CrashHandler)
 
 # breakpad 缺失时内层直接 return()（只告警、不建 target），示例随之跳过
@@ -62,7 +60,6 @@ message(STATUS "========================================")
 message(STATUS "  [Standalone: ${PROJECT_NAME}]")
 message(STATUS "========================================")
 message(STATUS "  Version:        ${PROJECT_VERSION}")
-message(STATUS "  Build Tests:    ${BUILD_CRASHHANDLER_TESTS}")
 message(STATUS "  Build Example:  ${BUILD_CRASHHANDLER_EXAMPLE}")
 if(TARGET CrashHandler)
     message(STATUS "  Breakpad:       FOUND")
