@@ -84,17 +84,17 @@ CrashHandler 内部使用 `std::mutex` 保证线程安全，采用 **`_nolock` �
 
 ### 与其他模块的关系
 
-- **SanYiCAD Main**：通过 `CrashHandlerBootstrap` 在 `QApplication` 创建后立即初始化
+- **April Main**：通过 `CrashHandlerBootstrap` 在 `QApplication` 创建后立即初始化
 - **AppPathManager**：提供跨平台可写的 `crashDumpsDir()` 路径
 - **Log**：启动后扫描历史 dump 并写入日志；崩溃回调中仅使用 `fprintf(stderr)`（崩溃安全）
-- **Qt**：SanYiCAD 在设置 `organizationName` / `applicationName` 后初始化，确保 `QStandardPaths` 路径正确
+- **Qt**：April 在设置 `organizationName` / `applicationName` 后初始化，确保 `QStandardPaths` 路径正确
 - **第三方集成**：只需链接 `CrashHandler.dll` 并包含 `CrashHandlerDLL.h`，无需依赖 Qt / Utility
 
 ---
 
-## SanYiCAD 集成说明
+## April 集成说明
 
-SanYiCAD 已完成 CrashHandler 接入，启动流程如下：
+April 已完成 CrashHandler 接入，启动流程如下：
 
 ```
 main()
@@ -124,9 +124,9 @@ main()
 
 | 平台 | 典型路径 |
 |------|---------|
-| **Windows** | `C:/Users/<user>/AppData/Local/SanYiCAD/crashes/` |
-| **macOS** | `~/Library/Application Support/SanYiCAD/crashes/` |
-| **Linux** | `~/.local/share/SanYiCAD/crashes/` |
+| **Windows** | `C:/Users/<user>/AppData/Local/April/crashes/` |
+| **macOS** | `~/Library/Application Support/April/crashes/` |
+| **Linux** | `~/.local/share/April/crashes/` |
 
 > 若 `QStandardPaths` 不可用，回退到 `<exe目录>/crashes/`。
 
@@ -200,9 +200,9 @@ if (CrashHandler_GetVersion() != CRASHHANDLER_VERSION)
 }
 ```
 
-### 2. SanYiCAD 内部用法
+### 2. April 内部用法
 
-SanYiCAD 内部无需直接调用 C API，使用 `CrashHandlerBootstrap` 即可：
+April 内部无需直接调用 C API，使用 `CrashHandlerBootstrap` 即可：
 
 ```cpp
 #include "CrashHandlerBootstrap.h"
@@ -349,11 +349,11 @@ CMake 会根据 `WIN32` / `APPLE` / `UNIX` 自动选择对应平台源文件（`
 
 ### 符号文件生成
 
-项目提供了 `sanyi_add_debug_symbols()` CMake 函数，自动处理各平台的符号文件：
+项目提供了 `apr_add_debug_symbols()` CMake 函数，自动处理各平台的符号文件：
 
 ```cmake
 # 在目标上调用
-sanyi_add_debug_symbols(${app_name})
+apr_add_debug_symbols(${app_name})
 ```
 
 各平台符号文件输出：
@@ -383,11 +383,11 @@ sanyi_add_debug_symbols(${app_name})
 
 ```bash
 # 1. 生成符号文件
-dump_syms SanYiCAD.pdb > SanYiCAD.sym
+dump_syms April.pdb > April.sym
 
 # 2. 创建符号目录结构
-mkdir -p symbols/SanYiCAD.pdb/<hash>/
-cp SanYiCAD.sym symbols/SanYiCAD.pdb/<hash>/
+mkdir -p symbols/April.pdb/<hash>/
+cp April.sym symbols/April.pdb/<hash>/
 
 # 3. 分析 minidump
 minidump_stackwalk crash.dmp symbols/ > stacktrace.txt
@@ -397,7 +397,7 @@ minidump_stackwalk crash.dmp symbols/ > stacktrace.txt
 
 ```bash
 # 1. 生成符号文件
-dump_syms SanYiCAD > SanYiCAD.sym
+dump_syms April > April.sym
 
 # 2. 分析
 minidump_stackwalk crash.dmp symbols/ > stacktrace.txt
@@ -407,7 +407,7 @@ minidump_stackwalk crash.dmp symbols/ > stacktrace.txt
 
 ```bash
 # 1. 从 dSYM 生成符号
-dump_syms -g SanYiCAD.dSYM/Contents/Resources/DWARF/SanYiCAD > SanYiCAD.sym
+dump_syms -g April.dSYM/Contents/Resources/DWARF/April > April.sym
 
 # 2. 分析
 minidump_stackwalk crash.dmp symbols/ > stacktrace.txt
@@ -468,7 +468,7 @@ Host: crash.example.com
 Content-Type: multipart/form-data
 
 dump_file: <binary dmp file>
-app_name: SanYiCAD
+app_name: April
 app_version: 1.0.0
 os: Windows 10
 os_version: 10.0.19045
@@ -555,11 +555,11 @@ string analyzeDump(const string& dumpPath, const string& symbolsDir)
 
 ```
 symbols/
-├── SanYiCAD.pdb/
+├── April.pdb/
 │   ├── 5F3D4E8A2B9C4D8E9F1A2B3C4D5E6F781/
-│   │   └── SanYiCAD.sym
+│   │   └── April.sym
 │   └── A1B2C3D4E5F67890ABCDEF12345678901/
-│       └── SanYiCAD.sym
+│       └── April.sym
 ├── Qt6Core.dll/
 │   └── ...
 └── ...

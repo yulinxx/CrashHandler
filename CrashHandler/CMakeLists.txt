@@ -13,11 +13,11 @@ set(VERSION_PATCH 0)
 set(PROJECT_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 # --- 路径 ---
-if(NOT SANYI_ROOT)
-    get_filename_component(SANYI_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
+if(NOT APR_ROOT)
+    get_filename_component(APR_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
 endif()
-include("${SANYI_ROOT}/CMake/SanYiPaths.cmake")
-include("${SANYI_ROOT}/CMake/Utils.cmake")
+include("${APR_ROOT}/CMake/AprPaths.cmake")
+include("${APR_ROOT}/CMake/Utils.cmake")
 
 # --- 源文件 ---
 file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
@@ -30,8 +30,8 @@ file(GLOB_RECURSE LIB_HEADERS CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/Include/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/Include/*.hpp"
 )
-list(FILTER LIB_SOURCES EXCLUDE REGEX "${SANYI_SOURCE_EXCLUDE_REGEX}")
-list(FILTER LIB_HEADERS EXCLUDE REGEX "${SANYI_HEADER_EXCLUDE_REGEX}")
+list(FILTER LIB_SOURCES EXCLUDE REGEX "${APR_SOURCE_EXCLUDE_REGEX}")
+list(FILTER LIB_HEADERS EXCLUDE REGEX "${APR_HEADER_EXCLUDE_REGEX}")
 
 # --- 第三方依赖（可选）---
 find_package(unofficial-breakpad CONFIG QUIET)
@@ -51,7 +51,7 @@ else()
 endif()
 
 # --- 统一入口创建 DLL ---
-sanyi_add_shared_library(${LIB_NAME}
+apr_add_shared_library(${LIB_NAME}
     FOLDER "${LIB_FOLDER}"
     DESCRIPTION "${LIB_DESCRIPTION}"
     EXPORT_MACRO "${LIB_EXPORT_MACRO}"
@@ -73,7 +73,7 @@ sanyi_add_shared_library(${LIB_NAME}
 # 注意：根 CMakeLists 直接 add_subdirectory(CrashHandler/CrashHandler)，不会经过父级
 # CrashHandler/CMakeLists.txt，因此测试必须挂在这里，否则总开关打开时
 # 也永远不生成 CrashHandlerTests 目标。
-sanyi_module_tests_enabled(CRASHHANDLER _crashhandler_tests)
+apr_module_tests_enabled(CRASHHANDLER _crashhandler_tests)
 if(_crashhandler_tests)
     if((TARGET GTest::gtest OR GTest_FOUND) AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../Test/CMakeLists.txt")
         enable_testing()
@@ -90,7 +90,7 @@ message(STATUS "  Platform: ${CMAKE_SYSTEM_NAME}(${CMAKE_SYSTEM_PROCESSOR})")
 message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "----------------------------------------")
 
-sanyi_export_imported_target(${LIB_NAME}
+apr_export_imported_target(${LIB_NAME}
     LIB_NAME "${LIB_NAME}"
     PUBLIC_INCLUDE_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}/Include"

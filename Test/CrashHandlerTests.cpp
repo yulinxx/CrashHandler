@@ -17,7 +17,7 @@ namespace
     // 每个用例独立的 dump 目录，先清干净再用，保证 dump 计数可断言
     std::string makeFreshDumpDir(const char* caseName)
     {
-        const fs::path dir = fs::temp_directory_path() / "sanyi_crashhandler_tests" / caseName;
+        const fs::path dir = fs::temp_directory_path() / "apr_crashhandler_tests" / caseName;
         std::error_code ec;
         fs::remove_all(dir, ec);
         fs::create_directories(dir, ec);

@@ -5,7 +5,7 @@
 
 // ============================================================
 //  CrashHandler 使用示例
-//  编译后执行 SyCrashHandlerExample.exe，在当前目录生成 crash_dumps\
+//  编译后执行 AprCrashHandlerExample.exe，在当前目录生成 crash_dumps\
 //
 //  标准调用顺序（见 CrashHandlerDLL.h 头注释）：
 //     ConfigInit -> SetCrashCallback（可选） -> Initialize
@@ -44,7 +44,7 @@ int main()
     CrashHandler_ConfigInit(&config);  // 清零 + 默认值（maxDumpFiles=10 等）
     const std::string dumpPath = "crash_dumps";
     config.dumpPath = dumpPath.c_str();  // 必填：dump 输出目录（不存在会自动创建）
-    config.appName = "SyCrashHandlerExample";
+    config.appName = "AprCrashHandlerExample";
     config.appVersion = "1.0.0";
     config.maxDumpFiles = 5;  // 只保留最近 5 个，超出由 CleanOldDumps 清理
 

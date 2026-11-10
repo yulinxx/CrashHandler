@@ -196,10 +196,10 @@ CMake 会根据 `WIN32` / `APPLE` / `UNIX` 自动选择对应平台源文件。
 
 ### 符号文件生成
 
-项目提供了 `sanyi_add_debug_symbols()` CMake 函数，自动处理各平台的符号文件：
+项目提供了 `apr_add_debug_symbols()` CMake 函数，自动处理各平台的符号文件：
 
 ```cmake
-sanyi_add_debug_symbols(${LIB_NAME})
+apr_add_debug_symbols(${LIB_NAME})
 ```
 
 | 平台 | 符号格式 | 输出位置 |

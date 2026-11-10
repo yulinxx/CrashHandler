@@ -10,7 +10,7 @@
 #
 #   1) 复用仓库统一配置，不自己手搓一套，避免与主工程漂移：
 #        ../Config.cmake               —— vcpkg / Qt 路径、MSVC 运行库、模块开关
-#        ../CMake/StandaloneInit.cmake —— SANYI_ROOT、编译选项、GTest 查找、兄弟模块拉入
+#        ../CMake/StandaloneInit.cmake —— APR_ROOT、编译选项、GTest 查找、兄弟模块拉入
 #      与 FileIO / Log / License / Utility / Nesting 的独立入口保持同一套写法。
 #
 #   2) 可脱离主程序单独编译：唯一依赖是 vcpkg 的 breakpad（unofficial-breakpad），
@@ -30,21 +30,21 @@
 include(${CMAKE_CURRENT_LIST_DIR}/../Config.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/../CMake/StandaloneInit.cmake)
 
-project(SanYiCrashHandler
+project(AprCrashHandler
     VERSION 1.0.0
-    DESCRIPTION "SanYi CAD Crash Handler Library (Breakpad minidump)"
+    DESCRIPTION "April CAD Crash Handler Library (Breakpad minidump)"
     LANGUAGES CXX
 )
 
 # MSVC 的 /W4 等选项必须在 project() 之后才能正确判定编译器
-sanyi_setup_compiler_options()
+apr_setup_compiler_options()
 
 # 示例目标仅存在于独立构建（内层不负责 Example）
 option(BUILD_CRASHHANDLER_EXAMPLE "Build CrashHandler usage example" ON)
 
 # --- 测试 -------------------------------------------------------------------
-sanyi_only_own_tests(CRASHHANDLER)
-sanyi_finalize_tests()
+apr_only_own_tests(CRASHHANDLER)
+apr_finalize_tests()
 
 # 内层：创建 CrashHandler DLL、挂载测试（BUILD_TESTS 时）、输出状态
 add_subdirectory(CrashHandler)
