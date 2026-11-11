@@ -135,6 +135,7 @@ namespace CrashHandler
         }
         catch (...)
         {
+            // 崩溃处理器不得向外抛异常：目录扫描失败时返回已收集到的结果
         }
 
         return files;
@@ -161,6 +162,7 @@ namespace CrashHandler
             }
             catch (...)
             {
+                // 单个旧 dump 删除失败（被占用/权限）不影响其余文件清理
             }
         }
 
@@ -189,6 +191,7 @@ namespace CrashHandler
         }
         catch (...)
         {
+            // 目录不可创建/不可访问：返回 false，由调用方降级为禁用落盘
             return false;
         }
     }
@@ -243,6 +246,7 @@ namespace CrashHandler
         }
         catch (...)
         {
+            // 移动失败（跨卷/权限）由返回值 false 通知调用方，崩溃处理器不得抛异常
             return false;
         }
     }
